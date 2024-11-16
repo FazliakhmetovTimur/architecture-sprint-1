@@ -191,11 +191,14 @@ function App() {
       <div className="page__content">
         <Header email={email} onSignOut={onSignOut} />
         <Switch>
+<<<<<<< HEAD:frontend/mainapp/src/App.js
           {/*Тут нужно настроить маршруты на микрофронты через конфиги webpack.config.js
           Но как их интегрировать сюда, пока не знаю*/}
           
 
           {/*Роут / защищён HOC-компонентом ProtectedRoute
+=======
+>>>>>>> origin/main:frontend/src/components/App.js
           <ProtectedRoute
             exact
             path="/"
@@ -208,9 +211,13 @@ function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
             loggedIn={isLoggedIn}
+<<<<<<< HEAD:frontend/mainapp/src/App.js
           />/
           *}
           {/*Роут /signup и /signin не является защищёнными, т.е оборачивать их в HOC ProtectedRoute не нужно.
+=======
+          />
+>>>>>>> origin/main:frontend/src/components/App.js
           <Route path="/signup">
             <Register onRegister={onRegister} />
           </Route>
