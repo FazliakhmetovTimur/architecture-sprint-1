@@ -1,54 +1,58 @@
 import React from "react";
 import { Route, useHistory, Switch } from "react-router-dom";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
-import ImagePopup from "./ImagePopup";
-import api from "../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import EditProfilePopup from "./EditProfilePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import AddPlacePopup from "./AddPlacePopup";
-import Register from "./Register";
-import Login from "./Login";
-import InfoTooltip from "./InfoTooltip";
-import ProtectedRoute from "./ProtectedRoute";
-import * as auth from "../utils/auth.js";
+import Header from "./Header.js";
+import Footer from "./Footer.js";
+import PopupWithForm from "./Profile/PopupWithForm.js";
+import ImagePopup from "./ImagesControl/ImagePopup.js";
+import api from "./api.js";
+import * as auth from "./utils/auth.js";
+import { CurrentUserContext } from "../shared_src/contexts/CurrentUserContext.js";
 
+/*
+Основное приложение используеться для:
+1) отрисовки Header и Footer
+2) проверки токена и активной сессии пользователя при монтировании
+3) загрузки остальных микрофронтов
+Все остальные сеттеры и обработчики переезжают в соотвествующие микрофронты
+*/
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
-    React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
-    React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState(null);
-  const [cards, setCards] = React.useState([]);
+  //const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
+  // React.useState(false);
+  //const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  //const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
+  // React.useState(false);
+  //const [selectedCard, setSelectedCard] = React.useState(null);
+  //const [cards, setCards] = React.useState([]);
 
-  // В корневом компоненте App создана стейт-переменная currentUser. Она используется в качестве значения для провайдера контекста.
-  const [currentUser, setCurrentUser] = React.useState({});
+  // В корневом компоненте App создана стейт-переменная currentUser. 
+  //Она используется в качестве значения для провайдера контекста.
+  //const [currentUser, setCurrentUser] = React.useState({});
 
-  const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
-  const [tooltipStatus, setTooltipStatus] = React.useState("");
+  //const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
+  //const [tooltipStatus, setTooltipStatus] = React.useState("");
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  //const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   //В компоненты добавлены новые стейт-переменные: email — в компонент App
   const [email, setEmail] = React.useState("");
 
   const history = useHistory();
+  // По дефолту рутим на страницу авторизации
+  history.push("/signin");
 
-  // Запрос к API за информацией о пользователе и массиве карточек выполняется единожды, при монтировании.
+  // При монтировании пытаемся получить текущего пользователя
+  // Если он есть, то сразу устанавливаем его как значение для провайдера контекста
   React.useEffect(() => {
     api
-      .getAppInfo()
-      .then(([cardData, userData]) => {
-        setCurrentUser(userData);
-        setCards(cardData);
+      .getUserInfo()
+      .then(([userData]) => {
+        //setCurrentUser(userData);        
+        CurrentUserContext.Provider=userData
       })
       .catch((err) => console.log(err));
   }, []);
 
-  // при монтировании App описан эффект, проверяющий наличие токена и его валидности
+  // При монтировании проверяем наличие токена и его валидности
+  // Если токен есть, то сразу рутим на микрофронт ImagesControl
   React.useEffect(() => {
     const token = localStorage.getItem("jwt");
     if (token) {
@@ -56,8 +60,8 @@ function App() {
         .checkToken(token)
         .then((res) => {
           setEmail(res.data.email);
-          setIsLoggedIn(true);
-          history.push("/");
+          //setIsLoggedIn(true);          
+          history.push("/imagescontrol");
         })
         .catch((err) => {
           localStorage.removeItem("jwt");
@@ -66,6 +70,7 @@ function App() {
     }
   }, [history]);
 
+  /*Все обработчики переезжают в соотвествующие микрофронты
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   }
@@ -168,6 +173,8 @@ function App() {
         setIsInfoToolTipOpen(true);
       });
   }
+   */
+  
 
   function onSignOut() {
     // при вызове обработчика onSignOut происходит удаление jwt
@@ -176,14 +183,19 @@ function App() {
     // После успешного вызова обработчика onSignOut происходит редирект на /signin
     history.push("/signin");
   }
+  
 
   return (
     // В компонент App внедрён контекст через CurrentUserContext.Provider
-    <CurrentUserContext.Provider value={currentUser}>
+    //<CurrentUserContext.Provider value={currentUser}>
       <div className="page__content">
         <Header email={email} onSignOut={onSignOut} />
         <Switch>
-          {/*Роут / защищён HOC-компонентом ProtectedRoute*/}
+          {/*Тут нужно настроить маршруты на микрофронты через конфиги webpack.config.js
+          Но как их интегрировать сюда, пока не знаю*/}
+          
+
+          {/*Роут / защищён HOC-компонентом ProtectedRoute
           <ProtectedRoute
             exact
             path="/"
@@ -196,16 +208,19 @@ function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
             loggedIn={isLoggedIn}
-          />
-          {/*Роут /signup и /signin не является защищёнными, т.е оборачивать их в HOC ProtectedRoute не нужно.*/}
+          />/
+          *}
+          {/*Роут /signup и /signin не является защищёнными, т.е оборачивать их в HOC ProtectedRoute не нужно.
           <Route path="/signup">
             <Register onRegister={onRegister} />
           </Route>
           <Route path="/signin">
             <Login onLogin={onLogin} />
           </Route>
+          */}
         </Switch>
         <Footer />
+        {/*Эти компоненты уже будут управляться внутри микрофронтов
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onUpdateUser={handleUpdateUser}
@@ -223,13 +238,9 @@ function App() {
           onClose={closeAllPopups}
         />
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-        <InfoTooltip
-          isOpen={isInfoToolTipOpen}
-          onClose={closeAllPopups}
-          status={tooltipStatus}
-        />
+        */}
       </div>
-    </CurrentUserContext.Provider>
+    //</CurrentUserContext.Provider>
   );
 }
 

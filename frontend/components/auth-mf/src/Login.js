@@ -1,10 +1,12 @@
 import React from 'react';
 
-import '../blocks/login/login.css';
+import '../styiles/login/login.css';
 
-function Login ({ onLogin }){
+function Login (){
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
+  const [tooltipStatus, setTooltipStatus] = React.useState("");
 
   function handleSubmit(e){
     e.preventDefault();
@@ -12,10 +14,28 @@ function Login ({ onLogin }){
       email,
       password
     }
-    onLogin(userData);
+    onLogin(userData);    
   }
+
+  function onLogin({ email, password }) {
+    auth
+      .login(email, password)
+      .then((res) => {
+        setIsLoggedIn(true);
+        setEmail(email);
+        history.push("/");
+      })
+      .catch((err) => {
+        setTooltipStatus("fail");
+        setIsInfoToolTipOpen(true);
+      });
+  }
+
   return (
     <div className="auth-form">
+      <Route path="/signin">
+            <Login onLogin={onLogin} />
+      </Route>
       <form className="auth-form__form" onSubmit={handleSubmit}>
         <div className="auth-form__wrapper">
           <h3 className="auth-form__title">Вход</h3>
@@ -32,6 +52,11 @@ function Login ({ onLogin }){
         </div>
         <button className="auth-form__button" type="submit">Войти</button>
       </form>
+      <InfoTooltip
+          isOpen={isInfoToolTipOpen}
+          onClose={setIsInfoToolTipOpen(false)}
+          status={tooltipStatus}
+      />
     </div>
   )
 }

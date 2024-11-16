@@ -1,8 +1,8 @@
 import React from 'react';
 import Card from './Card';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { CurrentUserContext } from '../src/contexts/CurrentUserContext';
 
-function Main({ cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete }) {
+export function ImagesControl({ cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete }) {
   const currentUser = React.useContext(CurrentUserContext);
 
   const imageStyle = { backgroundImage: `url(${currentUser.avatar})` };
@@ -35,4 +35,4 @@ function Main({ cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onC
   );
 }
 
-export default Main;
+
