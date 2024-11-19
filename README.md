@@ -160,7 +160,7 @@ webpack.config.js //конфиг Module Federation для микрофронта
 
 Ссылка на схему:
 
-[https://drive.google.com/file/d/15sbKavy18Ss_ssc6Yf3Qcw5pqDPU7Myj/view?usp=sharing](https://)
+[Ссылка на гугл](https://drive.google.com/file/d/15sbKavy18Ss_ssc6Yf3Qcw5pqDPU7Myj/view?usp=sharing)
 
 Схема получась громозкая, так как я детально изобразил потоки. Как это сделать проще и читабельнее, понял только, когда уже все закончил. Потратил очень много времени, поэтому не стал переделывать.
 
